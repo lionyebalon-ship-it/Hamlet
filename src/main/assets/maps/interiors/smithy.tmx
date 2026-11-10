@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.8" tiledversion="1.8.2" orientation="orthogonal" renderorder="right-down" width="10" height="8" tilewidth="16" tileheight="16" infinite="0" backgroundcolor="#65432f" nextlayerid="5" nextobjectid="1">
+ <properties><property name="room-title" value="THE VILLAGE SMITHY"/><property name="room-theme" value="stone-floored forge"/><property name="entry-x" type="int" value="4"/><property name="entry-y" type="int" value="6"/></properties>
+ <tileset firstgid="1" name="Hamlet Interior Furniture" tilewidth="16" tileheight="16" tilecount="96" columns="8">
+  <image source="../../tilesets/hamlet-interiors.png" width="128" height="192"/>
+ </tileset>
+ <layer id="1" name="Floor - stone-floored forge" width="10" height="8">
+  <data encoding="csv">
+53,54,55,56,53,54,55,56,53,54
+53,54,55,56,53,54,55,56,53,54
+54,55,56,53,54,55,56,53,54,55
+54,55,56,53,54,55,56,53,54,55
+55,56,53,54,55,56,53,54,55,56
+55,56,53,54,55,56,53,54,55,56
+56,53,54,55,56,53,54,55,56,53
+56,53,54,55,56,53,54,55,56,53
+  </data>
+ </layer>
+ <layer id="2" name="Walls, windows and door" width="10" height="8">
+  <data encoding="csv">
+6,6,6,6,6,6,6,7,6,6
+6,0,0,0,0,0,0,0,0,6
+6,0,0,0,0,0,0,0,0,6
+6,0,0,0,0,0,0,0,0,6
+6,0,0,0,0,0,0,0,0,6
+6,0,0,0,0,0,0,0,0,6
+6,0,0,0,0,0,0,0,0,6
+6,6,6,6,8,8,6,6,6,6
+  </data>
+ </layer>
+ <layer id="3" name="Room furnishings" width="10" height="8">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0
+0,0,0,0,0,0,0,21,22,0
+0,0,0,0,0,0,0,23,24,0
+0,30,31,0,0,0,0,0,0,0
+0,32,33,0,0,29,0,83,84,0
+0,0,0,0,0,0,0,0,0,0
+0,18,0,0,0,90,91,0,0,0
+0,0,0,0,0,0,0,0,0,0
+  </data>
+ </layer>
+</map>

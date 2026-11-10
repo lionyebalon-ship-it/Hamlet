@@ -1,0 +1,709 @@
+# MASTER CODEX PROMPT — HAMLET
+## Autonomous Medieval Village Simulation | Android | Version 0.1
+
+You are an engineering assistant helping build **Hamlet**, a persistent medieval village simulation for mobile. Work within the capabilities of the current repository and environment; do not assume that a full Android toolchain, emulator, API credentials, or network access is available.
+
+Your responsibility is to BUILD THE ACTUAL APPLICATION, not merely describe how it could be built.
+
+Inspect the existing repository before choosing what to build. Make focused changes that advance a working, testable application. Investigate dependencies and APIs when needed, implement code, run the checks the environment supports, and report precisely what was and was not verified.
+
+Do not stop at a plan when implementation is possible. Treat the full vision below as a roadmap, not a requirement to implement every subsystem in one session. Finish a coherent increment and its tests before expanding scope.
+
+---
+
+# 1. PROJECT VISION
+
+Hamlet is a 2D mobile simulation of a persistent medieval village. Its long-term vision is a village inhabited by autonomous characters whose needs, personalities, goals, memories, and relationships shape village life.
+
+The inhabitants are not ordinary scripted NPCs. Each character has an identity and background, personality and values, needs and preferences, ambitions, goals, plans, memories, relationships, knowledge, beliefs, occupation, and daily routines. They can initiate conversations, react to events, develop ambitions, and change behavior.
+
+The village must evolve over time through friendships, rivalries, businesses, traditions, rumors, economic relationships, community projects, and unexpected social situations.
+
+The player primarily observes and interacts with the simulation rather than directly controlling every character. The world persists between application sessions. AI is a central gameplay system: it drives character scheduling, goal selection, planning, and context-sensitive decisions. The application must degrade gracefully when AI is unavailable, but deterministic fallback behavior is a resilience path, not the intended primary experience.
+
+**Core design principle:** The simulation owns the world. AI owns character decision-making. AI proposes decisions; the simulation validates and executes them. AI must never directly modify authoritative world state.
+
+---
+
+# 2. TECHNICAL TARGET
+
+The product target is a native Android application. Confirm the repository's existing stack and available build tools before adding or changing technologies.
+
+- Project: Hamlet
+- Package: com.hamlet.app
+- Version: 0.1
+- Language: Kotlin
+- UI: Jetpack Compose
+- Rendering: LibGDX integrated into Android
+- Database: Room / SQLite
+- Networking: Ktor Client
+- Serialization: Kotlinx Serialization
+- Dependency injection: Hilt
+- Background tasks: WorkManager
+- Architecture: Clean Architecture with practical modular boundaries
+
+Use compatible dependency versions that can be verified. Prefer the smallest architecture that supports the next milestone; do not add every listed dependency or introduce modules without a concrete need. Keep simulation rules independent of Android UI and lifecycle APIs so they can be exercised with deterministic JVM tests. Keep AI orchestration behind testable interfaces so scheduling, decision, validation, and failure paths can be tested using fake providers. If an Android app module cannot be built in the current environment, keep progressing on independently testable code where practical and clearly mark Android integration as unverified.
+
+---
+
+# 3. RESEARCH AND INVESTIGATION
+
+Before implementing unfamiliar APIs:
+
+1. Inspect the existing repository and project structure.
+2. Preserve useful existing work.
+3. Consult official documentation for technologies actually being implemented.
+4. Verify dependency compatibility.
+5. Check whether referenced APIs and model identifiers still exist.
+6. Prefer official documentation over outdated tutorials.
+7. Do not invent endpoints, dependency versions, API parameters, or model identifiers.
+8. Record important technical decisions in existing project documentation when useful; do not create research paperwork that does not help implementation.
+
+## Environment and testability
+
+- Check the available JDK, Gradle wrapper, Android SDK, emulator/device, and relevant project tasks before selecting validation commands. Tool availability can differ between sessions.
+- Do not assume Android builds, instrumentation tests, rendering checks, network calls, or paid-provider calls can run. Never describe a check as passing unless it was actually run.
+- Keep core simulation rules deterministic and testable without Android or live network access. Use fixed seeds, a controllable clock, and fake AI providers to verify prompt inputs, scheduling triggers, response handling, validation, and fallback behavior.
+- Prefer focused unit tests for domain behavior. Run Android compilation, instrumentation, or UI checks only when the required SDK/device/tooling is available.
+- When a requested validation is blocked, state the exact missing prerequisite and run the closest meaningful alternative. Do not create a second build system solely to disguise an unavailable Android toolchain.
+- Builds and automated tests must not require external AI credentials or paid calls. Provide separately documented, opt-in integration checks for live provider connectivity when credentials and network access are available; never claim these passed unless run.
+- For each implemented increment, define observable acceptance criteria and run the smallest relevant test/build command. Fix regressions introduced by the change; report unrelated pre-existing failures without claiming they were fixed.
+
+---
+
+# 4. SYSTEM ARCHITECTURE
+
+As the project grows, keep clear boundaries between these concerns. Implement only the parts needed by the current milestone:
+
+## Application layer
+Application startup, navigation, dependency injection, user settings, lifecycle management, screens, and UI state.
+
+## World simulation engine
+World clock, calendar, time progression, locations, buildings, movement, navigation, collision, weather, resources, inventory, economy, events, and simulation ticks.
+
+## NPC intelligence engine
+Perception, needs, personality, motivation, AI-assisted scheduling and decisions, goals, planning, action execution, social behavior, and dialogue. This is a core gameplay system, not a future optional add-on.
+
+## Memory engine
+Episodic memories, semantic memories, social memories, procedural knowledge, autobiographical memories, memory importance, retrieval, consolidation, rumors, and knowledge confidence.
+
+## AI gateway
+Provider abstraction, Kilo adapter, model configuration/discovery where supported, request scheduling, response parsing, schema validation, bounded retries, rate limiting, usage tracking, and degraded-mode fallback.
+
+## Rendering engine
+Tile maps, sprites, animations, camera, lighting, buildings, character rendering, and navigation visualization.
+
+Keep boundaries practical rather than speculative. Avoid empty abstractions and placeholder subsystems; add replaceable interfaces where a real alternative or test seam is needed.
+
+---
+
+# 5. INITIAL WORLD
+
+Create a world named **The First Hamlet** using a deterministic world seed.
+
+The initial population is 12 villagers. Treat these as starting personality templates, not fixed scripts. Store identity, personality, occupation, goals, and relationships in the database.
+
+1. **Aldric**, 46 — Blacksmith. Proud, disciplined, stubborn. Ambition: expand his smithy.
+2. **Eliza**, 34 — Baker. Caring, practical, sociable. Ambition: secure reliable flour supplies.
+3. **Thomas**, 39 — Farmer. Patient, hardworking, cautious. Ambition: improve his harvest.
+4. **Eleanor**, 42 — Herbalist. Curious, compassionate, analytical. Ambition: expand her herbal knowledge.
+5. **Roland**, 51 — Innkeeper. Sociable, perceptive, humorous. Ambition: improve the tavern.
+6. **Mira**, 29 — Merchant. Ambitious, persuasive, calculating. Ambition: expand her trading network.
+7. **Edmund**, 44 — Carpenter. Creative, competitive, independent. Ambition: gain recognition for his craftsmanship.
+8. **Beatrice**, 36 — Village Guard. Principled, observant, protective. Ambition: improve village safety.
+9. **Father Oswin**, 63 — Cleric. Reflective, patient, forgiving. Ambition: strengthen the community.
+10. **Agnes**, 26 — Seamstress. Artistic, independent, determined. Ambition: establish a successful tailoring business.
+11. **Finn**, 24 — Hunter. Adventurous, observant, impulsive. Ambition: explore surrounding lands.
+12. **Margaret**, 71 — Retired farmer and village elder. Wise, nostalgic, opinionated. Ambition: preserve village traditions.
+
+---
+
+# 6. INITIAL RELATIONSHIPS
+
+Create these initial connections:
+
+- Aldric and Edmund: professional rivalry.
+- Eliza and Thomas: good friends.
+- Eliza and Roland: business partners.
+- Eleanor and Margaret: trusted friends.
+- Beatrice and Roland: mutual respect.
+- Mira and Finn: trade acquaintances.
+- Father Oswin and Margaret: longtime friends.
+- Agnes and Eliza: friendly neighbors.
+
+Other relationships may begin as strangers or acquaintances.
+
+Relationships must be dynamic and potentially asymmetric. Store separate attributes for trust, friendship, respect, familiarity, affection, and resentment. Relationship changes must result from actual interactions and events, not arbitrary random updates.
+
+---
+
+# 7. INITIAL VILLAGE
+
+Create these locations:
+
+1. Town Square.
+2. The Golden Stag Tavern.
+3. Blacksmith.
+4. Bakery.
+5. Market.
+6. Farm.
+7. Chapel.
+8. Forest.
+9. Carpenter Workshop.
+10. Residential Area.
+
+Create appropriate buildings, entrances, paths, and gathering areas. Assign villagers to homes and workplaces. Characters must travel between locations using navigation.
+
+Use a tile-based map.
+
+Art direction:
+- 2D top-down pixel art.
+- 16x16 environment tiles where appropriate.
+- 32x32 character sprites where appropriate.
+- Four-direction movement.
+- Idle, walking, working, and interaction animations.
+
+Keep map and sprite definitions data-driven. Use placeholders when necessary; do not block simulation development on final artwork.
+
+---
+
+# 8. WORLD SIMULATION
+
+Implement a persistent simulation clock.
+
+Initial speeds:
+- Paused.
+- Normal: 1 real minute = 5 game minutes.
+- Fast: 1 real minute = 15 game minutes.
+- Very fast: 1 real minute = 30 game minutes.
+
+Persist the clock when the application closes.
+
+Implement minutes, hours, days, weeks, months, seasons, and years. Make the calendar configurable.
+
+NPCs have flexible daily schedules. They must not blindly follow a timetable when important events occur. For example, a farmer may leave the field to help a friend, respond to an emergency, or pursue an important opportunity.
+
+Prefer event-driven simulation. Do not invoke AI every simulation tick.
+
+---
+
+# 9. NPC COGNITIVE ARCHITECTURE
+
+Every NPC has a persistent identity and individual state.
+
+Implement this pipeline:
+
+1. Perception.
+2. Relevant memory retrieval.
+3. Needs evaluation.
+4. Motivation evaluation.
+5. Goal selection.
+6. Planning.
+7. AI decision.
+8. World validation.
+9. Action execution.
+10. Memory creation.
+11. Learning and adaptation.
+
+Use separate services rather than one giant NPC class:
+
+- NpcPerceptionService
+- NpcMemoryService
+- NpcMotivationService
+- NpcGoalService
+- NpcPlanningService
+- NpcDecisionService
+- NpcActionExecutor
+- NpcLearningService
+
+Agents receive only information they can reasonably perceive or know. Do not give every NPC omniscient database access.
+
+NPCs distinguish between personally witnessed events, information learned from another person, rumors, assumptions, and incorrect beliefs. They must not automatically know private conversations or events they never witnessed.
+
+---
+
+# 10. NEEDS AND MOTIVATIONS
+
+Implement:
+- Hunger.
+- Energy.
+- Social connection.
+- Safety.
+- Comfort.
+- Occupation satisfaction.
+- Financial security.
+
+Needs change as simulation time advances. Each need has a current value, importance, rate of change, associated actions, and urgency thresholds.
+
+NPCs prioritize important needs while maintaining long-term ambitions. Personality and values influence priorities so villagers do not all make identical decisions.
+
+---
+
+# 11. GOALS AND PLANNING
+
+Support immediate, daily, long-term, social, economic, personal, and community goals.
+
+Each goal has a unique ID, owner NPC, description, priority, status, creation time, optional deadline, and completion criteria.
+
+NPCs can create, modify, abandon, and complete goals; develop new ambitions; and change priorities after major events.
+
+Planning is flexible. If a plan becomes impossible, the NPC reconsiders it rather than repeating the same failed action forever.
+
+---
+
+# 12. ACTION SYSTEM
+
+Implement a structured action registry.
+
+Initial actions:
+- travel_to
+- interact_with
+- speak
+- work
+- buy_item
+- sell_item
+- gather_resource
+- consume_item
+- rest
+- create_goal
+- modify_plan
+- observe
+- help_npc
+- end_activity
+
+Every action has defined parameters, validation rules, execution behavior, preconditions, expected outcomes, failure conditions, and generated world events.
+
+AI responses must never execute arbitrary code. Never evaluate AI output as source code, shell commands, SQL, scripts, or unrestricted function calls.
+
+Reject invalid actions with structured errors. Validate NPC authorization, location, distance and movement, inventory, resources, money, building permissions, world rules, and action preconditions.
+
+Use database transactions for operations that modify multiple records.
+
+---
+
+# 13. AI PROVIDER SYSTEM
+
+AI is a primary system for character scheduling, goal selection, planning, and meaningful decisions. Establish a testable decision/action boundary early, then integrate the provider as soon as the foundation supports it. Keep local simulation rules authoritative and provide a graceful degraded mode for outages, but do not defer AI integration as merely optional polish.
+
+When implementing online AI, the initial provider is Kilo AI Gateway.
+
+Documentation: https://kilo.ai/docs
+Gateway: https://ai-gateway.kilo.ai/api/v1
+
+Investigate current API documentation before implementing the adapter. Use an OpenAI-compatible abstraction where supported. Discover models only if the documented API supports it; otherwise accept a user-configured model identifier. Never invent endpoints, response fields, or model identifiers.
+
+Add provider components in useful increments. Start with one provider interface and adapter, strict response validation, cancellation/timeouts, and a deterministic fallback. Because AI drives ongoing character decisions, implement bounded request scheduling/concurrency, usage visibility, and rate-limit handling as demand requires. Add model discovery, routing, retries, or health checks only when supported by the real provider API and current product needs; do not create unused scaffolding.
+
+Potential future providers:
+- Kilo AI Gateway.
+- OpenRouter.
+- Gemini.
+- Local inference providers such as Ollama, where practical.
+
+Keep the provider seam small and provider-neutral. Separate model routing only when the application actually uses distinct AI tasks.
+
+Prefer economical free or low-cost models for routine actions. Use stronger models only when necessary.
+
+Handle failures explicitly. Implement bounded retries only where safe; never retry non-idempotent world actions. Add concurrency controls or request queues only when concurrent demand exists.
+
+When AI is unavailable, deterministic local behavior must preserve simulation integrity and handle essential routines. Surface degraded-mode state; do not silently imply that fallback behavior is equivalent to AI-driven scheduling and decisions.
+
+Never embed API keys in source code or commit them. Never log authentication headers or secrets. If credentials are stored on-device, use platform-appropriate secure storage and explain that client-side credentials cannot be fully protected from the device owner. Tests must use fake providers and must not require real credentials or paid calls.
+
+---
+
+# 14. AI ACTION RESPONSE FORMAT
+
+All NPC decision requests return structured JSON. Use Kotlin serialization and strict schemas.
+
+Example:
+
+{
+  "npc_id": "thomas",
+  "decision_type": "goal_action",
+  "reasoning_summary": "I need to acquire flour for my household.",
+  "goal": {
+    "description": "Acquire flour",
+    "priority": 75
+  },
+  "action": {
+    "type": "travel_to",
+    "target_id": "market",
+    "parameters": {}
+  },
+  "expected_outcome": "Reach the market",
+  "memory_candidates": [
+    {
+      "content": "I need to purchase flour.",
+      "importance": 40
+    }
+  ]
+}
+
+Use brief reasoning summaries only. Do not request or store hidden chain-of-thought.
+
+Validate every field before the action reaches the simulation. If JSON is malformed, retry or use fallback behavior. A failed AI response must never corrupt the world.
+
+---
+
+# 15. DIALOGUE AND AUTONOMOUS CONVERSATIONS
+
+NPCs can initiate conversations.
+
+Conversation context includes participants, location, current situation, relevant memories, relationship history, personality, current goals, and recent events.
+
+Characters should not sound identical.
+
+Implement greetings, casual conversation, work discussions, negotiations, requests for assistance, arguments, apologies, gossip, storytelling, and community discussions.
+
+Conversations can produce world events and change memories, knowledge, goals, and relationships. Dialogue alone must not change authoritative world state unless a validated action or event supports it.
+
+---
+
+# 16. MEMORY SYSTEM
+
+Build persistent individual memories.
+
+Categories:
+1. Episodic: events personally experienced.
+2. Semantic: facts and knowledge.
+3. Social: knowledge about people and relationships.
+4. Procedural: skills and learned methods.
+5. Autobiographical: personal history and identity.
+
+Each memory stores ID, owner NPC, event ID if applicable, category, content, importance, emotional weight, confidence, creation time, and last accessed time.
+
+Use SQLite FTS5 initially. Keep a replaceable MemorySearch interface for future semantic or vector retrieval.
+
+Implement memory consolidation. Important experiences should be retained more strongly than routine events.
+
+Memory privacy is essential: an NPC cannot automatically access another NPC's private memories. Rumors are stored as information received from another source, not automatically treated as verified truth.
+
+---
+
+# 17. ECONOMY
+
+Implement an expandable basic village economy.
+
+Initial resources:
+- Gold.
+- Wheat.
+- Flour.
+- Bread.
+- Wood.
+- Stone.
+- Iron.
+- Tools.
+- Herbs.
+- Meat.
+- Cloth.
+- Clothing.
+
+Create inventory, ownership, prices, transactions, production, consumption, resource gathering, business ownership, and supply-and-demand foundations.
+
+Businesses should eventually develop and expand. NPCs can buy and sell items when permitted.
+
+Use atomic transactions. Never allow negative inventory or duplicated money. Keep the economy data-driven.
+
+---
+
+# 18. PERSISTENCE AND DATABASE
+
+Use Room.
+
+Create suitable entities and DAOs for:
+- Worlds.
+- Locations.
+- Buildings.
+- NPCs.
+- Personalities.
+- Needs.
+- Goals.
+- Plans.
+- Memories.
+- Relationships.
+- World events.
+- Items.
+- Inventories.
+- Transactions.
+- Conversations.
+- Conversation messages.
+- AI requests.
+- Simulation settings.
+
+Use UUIDs for persistent entity IDs. Use migrations rather than destructive database recreation for normal upgrades. Separate Room entities from domain models.
+
+Create a WorldInitializer that creates the initial village only once. Repeated launches must never duplicate villagers or locations. Use database transactions for multi-record operations.
+
+---
+
+# 19. OFFLINE AND DEGRADED OPERATION
+
+Reliable behavior during connectivity loss is mandatory, but online AI-driven scheduling and decisions are the primary experience. Offline operation is a degraded mode, not the default design target.
+
+When offline or when the provider is unavailable:
+- World clock advances when execution is permitted.
+- Existing schedules and plans continue locally where safe.
+- Needs change.
+- NPCs move using local rules.
+- Existing plans continue.
+- Local events are generated.
+- Do not accumulate a backlog of obsolete per-NPC decisions. Skip, coalesce, or expire requests according to their type and freshness.
+- Deterministic fallback decisions handle essential routines and urgent needs; clearly indicate degraded mode.
+
+When the application reopens:
+- Calculate elapsed time using persisted timestamps.
+- Advance deterministic simulation systems and resolve eligible elapsed-time events using bounded local rules.
+- Do not issue a burst of stale AI calls for every missed decision.
+- Revalidate queued AI actions.
+- Resume active simulation.
+
+Never blindly execute stale queued decisions.
+
+Account for Android lifecycle and battery restrictions. Do not promise continuous background simulation when Android has suspended the application. Use WorkManager for deferred work. Use a foreground service only when appropriate, permitted, and clearly enabled by the user.
+
+---
+
+# 20. USER INTERFACE
+
+Build a polished medieval pixel-art simulation interface.
+
+## Village
+Main map, villager sprites, building sprites, camera movement, simulation clock, speed control, pause control, and selected villager information.
+
+## Characters
+All 12 villagers, portrait, name, occupation, current activity, and location.
+
+## Character profile
+Personality, needs, goals, ambitions, relationships, recent memories, and current plan.
+
+## Memories
+Individual memory timeline, significant experiences, social knowledge, and rumors.
+
+## World history
+Significant events, important conversations, economic developments, and community changes.
+
+## Settings
+AI provider, model configuration, API credential management, connectivity/degraded-mode status, simulation speed, background simulation controls, and debug tools.
+
+Use Compose for application screens and LibGDX for village rendering. Do not put simulation logic inside UI composables. Use ViewModels and observable state.
+
+---
+
+# 21. SIMULATION SCHEDULER
+
+Build a central scheduler for simulation events and AI requests. Do not run 12 permanent polling loops. Use event-driven triggers, batching where appropriate, concurrency limits, and priority queues so meaningful character decisions receive AI attention without flooding the provider or blocking the simulation.
+
+AI should contribute to character schedules and adapt them to needs, goals, personality, relationships, and new events. The simulation owns timing, authoritative state, and execution. Keep routine movement and clock updates local; request AI decisions on meaningful triggers rather than on every frame or tick. Make the cadence configurable and account for provider latency, rate limits, and usage cost.
+
+Suggested priorities:
+1. Urgent needs.
+2. Important world events.
+3. Active social interactions.
+4. High-priority goals.
+5. Routine planning.
+6. Memory maintenance.
+
+Initial configurable timing:
+- Clock update: approximately once per second.
+- Movement: approximately every 250–500 ms while actively rendering.
+- Needs evaluation: approximately every 10 seconds.
+- Decision evaluation: approximately every 5–15 seconds or on meaningful events.
+- Memory consolidation: once per game day.
+
+These are starting values, not immutable rules. Avoid unnecessary network requests, but do not starve active NPCs of decisions. Use AI when meaningful scheduling or decision events occur, subject to priority, concurrency, and cost controls.
+
+---
+
+# 22. PERFORMANCE
+
+The initial population is 12 NPCs, but architecture must support expansion.
+
+Avoid constant AI polling, unnecessary database queries, repeated full-memory prompts, excessive object allocation, loading every asset simultaneously, blocking the main thread, and running network calls on the UI thread.
+
+Use coroutines, background dispatchers, batching where practical, and relevant-memory retrieval. Track AI usage per NPC and request type. Make performance settings configurable.
+
+---
+
+# 23. SECURITY AND RELIABILITY
+
+Requirements:
+- No arbitrary code execution from AI output.
+- No unrestricted SQL generated by AI.
+- No API secrets in source control or logs.
+- Validate every external response.
+- Handle network and database failures.
+- Handle application process death.
+- Handle corrupted or incomplete AI output.
+- Use transactions for critical state changes.
+- Avoid duplicate event processing.
+- Persist simulation state safely.
+
+Create structured logs without sensitive data and provide useful error messages.
+
+---
+
+# 24. TESTING
+
+Write meaningful tests for implemented behavior; do not create empty tests or tests for unimplemented roadmap features. Keep simulation rules deterministic using fixed world seeds, an injectable clock, and fake AI responses. Test AI orchestration and decisions with fake providers rather than depending on live model output.
+
+As the corresponding features are implemented, test:
+1. World initialization.
+2. Exactly 12 initial NPCs.
+3. Initial locations.
+4. Initial relationships.
+5. Persistence after application restart.
+6. World clock progression.
+7. NPC needs.
+8. Movement and navigation.
+9. Action validation.
+10. Invalid AI responses.
+11. AI-unavailable/degraded-mode behavior.
+12. Memory privacy.
+13. Rumor propagation.
+14. Relationship updates.
+15. Inventory transactions.
+16. Economy consistency.
+17. Duplicate event prevention.
+18. Multiple-day simulation.
+19. AI request cancellation.
+20. Database migrations.
+
+Begin with the tests that support the current milestone. Extend to multi-day simulations and economy/social invariants only when those systems exist. Do not imply that a test passed because it was written; run it and report the command and result.
+
+---
+
+# 25. DEVELOPMENT MILESTONES
+
+These milestones are a roadmap. Do not force their full scope into one change or session. Select the smallest milestone slice that can be built and verified in the current environment.
+
+## MILESTONE 1 — Testable foundation
+- Inspect the repository and available build/test tools.
+- Establish the smallest buildable project structure that fits the existing repository.
+- Define core world/NPC models and deterministic initialization.
+- Seed the 12 villagers, initial relationships, and locations without duplication.
+- Add focused tests for initialization and its invariants.
+- Add persistence only when it can be implemented and verified in the current project setup.
+
+Deliverable: A deterministic village model initializes once and its core invariants are covered by passing tests. Android UI launch is a separate check and must be reported as unverified when unavailable.
+
+## MILESTONE 2 — Living World
+- World clock and calendar.
+- Locations and tile map.
+- NPC movement and navigation.
+- Collision.
+- Daily schedules.
+- Needs.
+- Simulation speed.
+
+Deliverable: The simulation clock, movement, and state transitions are locally reliable and covered by deterministic tests. AI-driven schedule and decision behavior is introduced and tested in the following milestone.
+
+## MILESTONE 3 — AI-driven scheduling and decisions
+- Provider interfaces.
+- Kilo adapter.
+- Model configuration and discovery where supported.
+- Event-driven AI request scheduling and bounded concurrency.
+- Structured response handling.
+- Validation.
+- Degraded-mode fallback.
+- Usage tracking.
+
+Deliverable: NPC scheduling and meaningful decisions use AI proposals through the provider interface; fake-provider tests prove that valid proposals are validated before execution and malformed, stale, rate-limited, or unavailable responses cannot corrupt world state. Live Kilo connectivity is separately verified only when credentials and network access are available.
+
+## MILESTONE 4 — Autonomous NPCs
+- Perception.
+- Motivation.
+- Goals.
+- Planning.
+- Action execution.
+- Autonomous activities.
+- Dynamic schedules.
+
+Deliverable: Villagers pursue independent goals.
+
+## MILESTONE 5 — Social Intelligence
+- Dialogue.
+- Relationships.
+- Memory.
+- Gossip.
+- Social events.
+- Individual beliefs.
+
+Deliverable: Villagers develop social histories.
+
+## MILESTONE 6 — Emergent Civilization
+- Economy.
+- Businesses.
+- Production.
+- Trade.
+- Community projects.
+- Expanding ambitions.
+- World history.
+
+Deliverable: The village develops beyond its initial configuration.
+
+---
+
+# 26. WORKING RULES FOR CODEX
+
+You have broad autonomy to implement this project.
+
+1. Start by inspecting the entire repository.
+2. Identify what already exists.
+3. Do not overwrite useful existing work without reason.
+4. Choose one small, observable implementation increment and its acceptance checks.
+5. Implement it when the request calls for implementation; for analysis/documentation requests, do only the requested work.
+6. Make sensible decisions without asking about every detail.
+7. Prefer reliable, simple solutions over unnecessary complexity.
+8. Use official documentation for unfamiliar APIs.
+9. Run the smallest relevant available build or test frequently.
+10. Inspect and report the actual command result, including environmental blockers.
+11. Fix errors before advancing.
+12. Keep code organized.
+13. Add documentation for important architecture decisions.
+14. Avoid placeholder implementations when a working implementation is practical.
+15. Clearly identify unavoidable placeholders.
+16. Never claim a build or test succeeded unless it actually ran successfully.
+17. Do not substitute documentation for requested working code.
+18. Continue beyond the current increment only when doing so remains safe and testable in the available environment.
+19. If a dependency or API is unavailable, investigate alternatives and implement a compatible solution.
+20. Do not delete working functionality merely to simplify implementation.
+
+If a task is too large for one session, finish the current coherent increment, record exact progress and validation results in the existing status documentation when appropriate, and identify the next concrete step.
+
+---
+
+# 27. PROJECT DOCUMENTATION
+
+Keep the README accurate. Add or maintain implementation status and focused architecture, decision, AI, database, simulation, or testing documents only when they help explain implemented functionality or guide active work. Do not create all listed documents up front.
+
+When an implementation-status document exists, update it when milestone status materially changes.
+
+Status notes should distinguish implemented, tested, and environment-blocked behavior. Include build/test commands and results when relevant.
+
+---
+
+# 28. DEFINITION OF SUCCESS
+
+The first playable vertical slice should establish exactly-once village initialization, persistence when the selected platform setup supports it, a controllable simulation clock, and AI-driven NPC scheduling/decision-making through a provider boundary. AI proposals must be validated by the simulation before execution. The core rules and AI orchestration must have runnable tests using fake providers that do not depend on Android rendering, live network access, or credentials.
+
+Android launch/rendering, database restart behavior, device-specific lifecycle behavior, and live provider connectivity are separate acceptance checks. Mark each as verified only after running it with a suitable toolchain, device, credentials, and network. Offline fallback is required for reliability but is not a substitute for the AI-driven primary experience. Advanced social behavior, economy, and multi-day emergence remain roadmap goals until implemented and tested.
+
+Do not treat every long-term vision bullet as a version 0.1 gate. Prioritize a small working slice, then expand without compromising the simulation/AI authority boundary, AI-driven character behavior, or graceful operation during provider outages.
+
+---
+
+# FINAL INSTRUCTION
+
+Begin with the user's current request. Inspect the repository before implementation. When asked to build, implement the next highest-value testable increment and run the checks the environment supports. Do not turn a request to review or edit documentation into unrelated application work.
+
+For implementation work, report:
+1. What you implemented.
+2. Files created or changed.
+3. Dependencies added.
+4. Build and test results.
+5. Problems discovered and fixed.
+6. Remaining limitations.
+7. The next useful increment, if applicable.
+
+Be accurate about limitations: distinguish what exists, what tests establish, and what could not be exercised. Build Hamlet incrementally as a real, expandable, persistent medieval village simulation.

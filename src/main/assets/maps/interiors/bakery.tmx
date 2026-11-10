@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.8" tiledversion="1.8.2" orientation="orthogonal" renderorder="right-down" width="9" height="8" tilewidth="16" tileheight="16" infinite="0" backgroundcolor="#65432f" nextlayerid="5" nextobjectid="1">
+ <properties><property name="room-title" value="THE VILLAGE BAKERY"/><property name="room-theme" value="stone bakehouse"/><property name="entry-x" type="int" value="4"/><property name="entry-y" type="int" value="6"/></properties>
+ <tileset firstgid="1" name="Hamlet Interior Furniture" tilewidth="16" tileheight="16" tilecount="96" columns="8">
+  <image source="../../tilesets/hamlet-interiors.png" width="128" height="192"/>
+ </tileset>
+ <layer id="1" name="Floor - stone bakehouse" width="9" height="8">
+  <data encoding="csv">
+57,58,59,60,57,58,59,60,57
+57,58,59,60,57,58,59,60,57
+58,59,60,57,58,59,60,57,58
+58,59,60,57,58,59,60,57,58
+59,60,57,58,59,60,57,58,59
+59,60,57,58,59,60,57,58,59
+60,57,58,59,60,57,58,59,60
+60,57,58,59,60,57,58,59,60
+  </data>
+ </layer>
+ <layer id="2" name="Walls, windows and door" width="9" height="8">
+  <data encoding="csv">
+5,5,5,5,5,5,7,5,5
+5,0,0,0,0,0,0,0,5
+5,0,0,0,0,0,0,0,5
+5,0,0,0,0,0,0,0,5
+5,0,0,0,0,0,0,0,5
+5,0,0,0,0,0,0,0,5
+5,0,0,0,0,0,0,0,5
+5,5,5,5,8,8,5,5,5
+  </data>
+ </layer>
+ <layer id="3" name="Room furnishings" width="9" height="8">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0
+0,43,44,0,0,0,25,26,0
+0,45,46,0,0,0,27,28,0
+0,0,0,0,0,0,0,0,0
+0,0,0,13,14,0,0,85,0
+0,70,71,15,16,0,0,0,0
+0,72,73,0,0,0,86,0,0
+0,0,0,0,0,0,0,0,0
+  </data>
+ </layer>
+</map>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.8" tiledversion="1.8.2" orientation="orthogonal" renderorder="right-down" width="9" height="8" tilewidth="16" tileheight="16" infinite="0" backgroundcolor="#65432f" nextlayerid="5" nextobjectid="1">
+ <properties><property name="room-title" value="A HAMLET COTTAGE"/><property name="room-theme" value="one-room peasant home"/><property name="entry-x" type="int" value="4"/><property name="entry-y" type="int" value="6"/></properties>
+ <tileset firstgid="1" name="Hamlet Interior Furniture" tilewidth="16" tileheight="16" tilecount="96" columns="8">
+  <image source="../../tilesets/hamlet-interiors.png" width="128" height="192"/>
+ </tileset>
+ <layer id="1" name="Floor - one-room peasant home" width="9" height="8">
+  <data encoding="csv">
+49,50,51,52,49,50,51,52,49
+49,50,51,52,49,50,51,52,49
+50,51,52,49,50,51,52,49,50
+50,51,52,49,50,51,52,49,50
+51,52,49,50,51,52,49,50,51
+51,52,49,50,51,52,49,50,51
+52,49,50,51,52,49,50,51,52
+52,49,50,51,52,49,50,51,52
+  </data>
+ </layer>
+ <layer id="2" name="Walls, windows and door" width="9" height="8">
+  <data encoding="csv">
+6,6,7,6,6,6,6,6,6
+6,0,0,0,0,0,0,0,6
+6,0,0,0,0,0,0,0,6
+6,0,0,0,0,0,0,0,6
+6,0,0,0,0,0,0,0,6
+6,0,0,0,0,0,0,0,6
+6,0,0,0,0,0,0,0,6
+6,6,6,6,8,8,6,6,6
+  </data>
+ </layer>
+ <layer id="3" name="Room furnishings" width="9" height="8">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0
+0,9,10,0,0,0,21,22,0
+0,11,12,0,0,0,23,24,0
+0,0,0,0,0,0,0,0,0
+0,19,20,0,13,14,0,0,0
+0,0,0,0,15,16,0,65,0
+0,0,0,17,0,0,0,0,0
+0,0,0,0,0,0,0,0,0
+  </data>
+ </layer>
+</map>

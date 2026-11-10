@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.8" tiledversion="1.8.2" orientation="orthogonal" renderorder="right-down" width="10" height="9" tilewidth="16" tileheight="16" infinite="0" backgroundcolor="#65432f" nextlayerid="5" nextobjectid="1">
+ <properties><property name="room-title" value="THE VILLAGE CHAPEL"/><property name="room-theme" value="stone prayer hall"/><property name="entry-x" type="int" value="4"/><property name="entry-y" type="int" value="7"/></properties>
+ <tileset firstgid="1" name="Hamlet Interior Furniture" tilewidth="16" tileheight="16" tilecount="96" columns="8">
+  <image source="../../tilesets/hamlet-interiors.png" width="128" height="192"/>
+ </tileset>
+ <layer id="1" name="Floor - stone prayer hall" width="10" height="9">
+  <data encoding="csv">
+53,54,55,56,53,54,55,56,53,54
+53,54,55,56,53,54,55,56,53,54
+54,55,56,53,54,55,56,53,54,55
+54,55,56,53,54,55,56,53,54,55
+55,56,53,54,55,56,53,54,55,56
+55,56,53,54,55,56,53,54,55,56
+56,53,54,55,56,53,54,55,56,53
+56,53,54,55,56,53,54,55,56,53
+53,54,55,56,53,54,55,56,53,54
+  </data>
+ </layer>
+ <layer id="2" name="Walls, windows and door" width="10" height="9">
+  <data encoding="csv">
+5,5,7,5,5,5,5,7,5,5
+5,0,0,0,0,0,0,0,0,5
+5,0,0,0,0,0,0,0,0,5
+5,0,0,0,0,0,0,0,0,5
+5,0,0,0,0,0,0,0,0,5
+5,0,0,0,0,0,0,0,0,5
+5,0,0,0,0,0,0,0,0,5
+5,0,0,0,0,0,0,0,0,5
+5,5,5,5,8,8,5,5,5,5
+  </data>
+ </layer>
+ <layer id="3" name="Room furnishings" width="10" height="9">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0
+0,93,0,0,38,39,0,0,0,0
+0,0,0,0,0,0,0,0,0,0
+0,0,0,0,0,0,0,0,0,0
+0,0,40,41,0,0,40,41,0,0
+0,0,0,0,0,0,0,0,0,0
+0,0,40,41,0,0,40,41,0,0
+0,0,0,0,0,0,0,0,0,0
+0,0,0,0,0,0,0,0,0,0
+  </data>
+ </layer>
+</map>
